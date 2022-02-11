@@ -7,13 +7,9 @@ function App() {
   const [payments, setPayments] = useState([]);
 
   const handleChange = (e) => {
-    console.log(e.target);
     setRequest({ ...request,[e.target.name]:e.target.value});
-    console.log(request);
   }
   const handleSubmit = async (event) => {
-    console.log(request);
-
     fetch('/payments',
       {
         method: 'POST',
@@ -28,10 +24,13 @@ function App() {
       setPayments(data)
   })
   .catch(error => {
-      this.setState({ errorMessage: error.toString() });
       console.error('There was an error!', error);
   });
   };
+
+const currencyFormat = (num) => {
+   return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+};
   return (
     <div className="App">
 <Form onSubmit={handleSubmit}>
@@ -64,7 +63,7 @@ function App() {
 <Table striped bordered hover>
   <thead>
     <tr>
-      <th>#</th>
+      <th>Week</th>
       <th>Payment</th>
       <th>Pending</th>
       <th>Date</th>
@@ -74,8 +73,8 @@ function App() {
     {payments.map( (pay,index) => (
       <tr>
           <td>{pay.payment_number}</td>
-          <td>{pay.payment_amount}</td>
-          <td>{pay.pending_amount}</td>
+          <td>{currencyFormat(pay.payment_amount)}</td>
+          <td>{currencyFormat(pay.pending_amount)}</td>
           <td>{pay.payment_date}</td>
         </tr>
        )
